@@ -1,0 +1,103 @@
+https://wiki.archlinux.org/title/installation_guide
+https://wiki.archlinux.org/title/installation_guide_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
+
+https://wiki.archlinux.org/title/Localization_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
+
+CТРОКА ПРИГЛАШЕНИЯ
+https://misc.flogisoft.com/bash/tip_colors_and_formatting
+https://gilesorr.com/bashprompt/prompts/index.html
+https://www.gnu.org/software/bash/manual/html_node/Controlling-the-Prompt.html
+https://www.askapache.com/linux/bash-power-prompt/
+
+ПРОВЕРКА НА БИОС - ls /sys/firmware/efi/efivars (ошибка - биос, иначе - UEFI) СЕЙЧАС - БИОС!!!!!!!! БРАТЬ РАЗМЕТКУ БЕЗ BOOT 
+https://losst.ru/ustanovka-zagruzchika-grub
+
+https://overcoder.net/q/12603/%D0%BA%D0%B0%D0%BA-%D1%81%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C-%D1%81%D0%BB%D1%83%D1%87%D0%B0%D0%B9%D0%BD%D0%BE%D0%B5-%D1%87%D0%B8%D1%81%D0%BB%D0%BE-%D0%B2-bash
+
+Сделать на корневом диске - BIOS boot partition + из установки добавить сеть и настройки сети
+
+loadkeys ru
+setfont cyr-sun16
+ip link
+ping archlinux.org
+timedatectl set-ntp true
+timedatectl set-timezone Europe/Moscow
+РАЗДЕЛЫ ДИСКОВ
+ФОРМАТИРОВАНИЕ РАЗДЕЛОВ через fdisk (gdisk сделать раздел в 1МБ для BIOS GPT, hexcode - ef02)
+( # /boot - загрузчик - mkfs.fat -F32 /dev/sdxY ??? сделать раздел системный раздел с EFI?
+  / - №1 основной диск = ext4 - mkfs.ext4 /dev/корневой_раздел
+  /home - №2 доп диск для данных = ext4 mkfs.ext4 /dev/sdxY
+  /swap - №2 подкачка - mkswap /dev/раздел_подкачки
+)
+mount /dev/корневой_раздел /mnt
+swapon /dev/раздел_подкачки
+mkdir /mnt/home
+mount /dev/домашний_раздел /mnt/home
+???????
+mkdir /mnt/boot
+mount /dev/раздел_boot /mnt/boot
+???????
+pacstrap /mnt base base-devel linux linux-firmware nano networkmanager openssh git iwd micro wget 
+genfstab -L /mnt > /mnt/etc/fstab ИЛИ genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+ln -sf /usr/share/zoneinfo/Регион/Город /etc/localtime
+hwclock --systohc
+Отредактируйте файл /etc/locale.gen расскоментировать en_US.UTF-8 UTF-8 , ru_RU.UTF-8 UTF-8
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+????????????
+echo "KEYMAP=ru 
+FONT=cyr-sun16" > /etc/vconsole.conf
+????????????
+nano /etc/hostname моёимяхоста
+nano /etc/hosts
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	моёимяхоста.localdomain	моёимяхоста
+passwd
+EDITOR=nano
+pacman -S grub
+grub-install (--force по необходимости) /dev/sd_где_boot 
+grub-mkconfig -o /boot/grub/grub.cfg
+useradd -m -g users -G wheel -s /bin/bash %userName%     https://hackware.ru/?p=11183
+passwd %userName%
+visudo добавить в конец user_name ALL=(ALL) ALL
+
+
+systemctl enable NetworkManager
+systemctl start NetworkManager
+systemctl status NetworkManager
+установить bash-completion
+git clone https://git.suckless.org/dwm
+git clone https://git.suckless.org/slstatus
+git clone https://git.suckless.org/dmenu
+
+https://wiki.archlinux.org/title/Xorg_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
+
+xorg-server xorg-xinit xorg-xrandr libxft libxinerama xorg (драйвера: для вируталки - xf86-video-fbdev, для остального выше) 
+
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
+добавить [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx   в   ~/.bash_profile
+в .xinitrc написать 
+xrandr --output КУДА_ВЫВОДИТЬ --mode РЕЗРЕШЕНИЕ &
+slstatus &
+exec dwm
+
+настроить AUR
+
+
+https://low-orbit.net/arch-linux-how-to-change-keyboard-layout
+setxkbmap -query - ВЫВОД МОДЕЛИ
+setxkbmap -model МОЯ_МОДЕЛЬ -layout us,ru -option grp:lctrl_lshift_toggle
+
+ПРОГИ
+pacman -S mc feh keepassxc flameshot ttf-ibm sakura (редактировать - ~/.config/sakura/sakura.conf) 
+feh --randomize --bg-fill ~/.wallpaper/* - добавить в .xinitrc
+
+ПАТЧИ
+https://dwm.suckless.org/patches/bar_height/
+https://dwm.suckless.org/patches/singularborders/
+https://dwm.suckless.org/patches/notitle/
+https://dwm.suckless.org/patches/underlinetags/
+https://dwm.suckless.org/patches/hide_vacant_tags/
+https://dwm.suckless.org/patches/fakefullscreen/
