@@ -11,7 +11,12 @@ Patches:
 - [Hide vacant tags](https://dwm.suckless.org/patches/hide_vacant_tags/)
 - [Fullscreen](https://dwm.suckless.org/patches/fakefullscreen/) (if Picture In Picture mode isn't used)
 
-Also I changed keys for moving current active window and resizing it by arrows.
+My keys rules:
+* ModKey + ↓, ↑ to change stack size;
+* ModKey + ←, → to change active window;
+* ModKey + Shift + ←, → to resize active window;
+* ModKey + S to take a screenshot by [flameshot](https://github.com/flameshot-org/flameshot);
+* ModKey + PrtSc to take a full screen screenshot;
 ## DMENU
 Patches:
 - [Turn off case sensative](https://tools.suckless.org/dmenu/patches/case-insensitive/)
