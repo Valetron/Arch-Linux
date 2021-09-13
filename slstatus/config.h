@@ -65,17 +65,17 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 	/* function format          argument */
-	{ netspeed_rx, " r: %s", "enp0s3"},
-	{ netspeed_tx, " t: %s", "enp0s3"}, 
-//	{ battery_perc, " battery: %s %%", ""},
+	{ netspeed_rx, " r:%4.3s", "enp0s3"},
+	{ netspeed_tx, " t:%4.3s", "enp0s3"}, 
+	{ battery_perc, " battery: %3s ", "BAT0"},
 //	{ vol_perc, " vol: %s", },
 	{ wifi_perc, " w/f: %s", "enp0s3"},
 //	{ entropy, " entropy: %s", NULL},
-	{ disk_perc, " /root: %s", "/"},
-	{ disk_perc, " /home: %s", "/home"},
-	{ cpu_perc, " cpu: %s",	NULL},
-	{ ram_perc, " ram: %s",	NULL},
-	{ swap_perc, " swap: %s", NULL},
-	{ keymap, " %s", 	NULL},
-	{ datetime, " %s",      "%D %T" },
+	{ disk_perc, " /root:%3s", "/"},
+	{ disk_perc, " /home:%3s", "/home"},
+	{ cpu_perc, " cpu:%3s", NULL},
+	{ ram_perc, " ram:%3s", NULL},
+	{ swap_perc, " swap:%3s", NULL},
+	{ keymap, " %s", NULL},
+	{ datetime, " %s", "%D %T" },
 };
