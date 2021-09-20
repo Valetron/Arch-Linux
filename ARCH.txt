@@ -91,13 +91,38 @@ setxkbmap -query - ВЫВОД МОДЕЛИ
 setxkbmap -model МОЯ_МОДЕЛЬ -layout us,ru -option grp:lctrl_lshift_toggle
 
 ПРОГИ
-pacman -S mc feh keepassxc flameshot ttf-ibm sakura (редактировать - ~/.config/sakura/sakura.conf) 
+https://github.com/Jguer/yay		---- 330-380 МБ
+https://github.com/fosskers/aura	---- ПРОВЕРИТЬ!
+https://librewolf-community.gitlab.io/install/
+
+pacman -S mc feh keepassxc flameshot ttf-ibm alsa-utils firefox
 feh --randomize --bg-fill ~/.wallpaper/* - добавить в .xinitrc
 
-ПАТЧИ
+ПАТЧИ DWM
 https://dwm.suckless.org/patches/bar_height/
 https://dwm.suckless.org/patches/singularborders/
 https://dwm.suckless.org/patches/notitle/
 https://dwm.suckless.org/patches/underlinetags/
 https://dwm.suckless.org/patches/hide_vacant_tags/
 https://dwm.suckless.org/patches/fakefullscreen/
+
+ПАТЧИ DMENU
+https://tools.suckless.org/dmenu/patches/case-insensitive/
+https://tools.suckless.org/dmenu/patches/border/
+https://tools.suckless.org/dmenu/patches/center/
+
+
+ПАТЧИ ST
+https://st.suckless.org/patches/anysize/
+https://st.suckless.org/patches/bold-is-not-bright/
+https://st.suckless.org/patches/rightclickpaste/
+https://st.suckless.org/patches/clipboard/
+https://st.suckless.org/patches/scrollback/
+
+
+ШРИФТЫ
+nerd-fonts-terminus
+nerd-fonts-go-mono
+nerd-fonts-noto
+nerd-fonts-inconsolata
+nerd-fonts-source-code-pro
