@@ -40,7 +40,7 @@
 			return NULL;
 		}
 
-		return bprintf("%d", perc);
+		return bprintf("% -3d", perc);
 	}
 
 	const char *
