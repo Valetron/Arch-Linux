@@ -1,5 +1,4 @@
-# Arch Linux
-My Arch Linux rice.
+# DWM rice
 
 ![Arch Linux](https://github.com/Valetron/Arch-Linux/blob/main/image.png)
 ## DWM
