@@ -8,15 +8,7 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 # merge in defaults and keymaps
 
 if [ -f $sysresources ]; then
-
-
-
-
-
-
-
     xrdb -merge $sysresources
-
 fi
 
 if [ -f $sysmodmap ]; then
@@ -24,15 +16,7 @@ if [ -f $sysmodmap ]; then
 fi
 
 if [ -f "$userresources" ]; then
-
-
-
-
-
-
-
     xrdb -merge "$userresources"
-
 fi
 
 if [ -f "$usermodmap" ]; then
@@ -48,8 +32,10 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
-setxkbmap -model pc105 -layout us,ru -option grp:lctrl_lshift_toggle &
+setxkbmap -model pc105 -layout us,ru -option grp:alt_shift_toggle &
 slstatus &
-xrandr --output Virtual1 --mode 1920x1080
-feh --randomize --bg-fill ~/wallpapers/* &
-exec dwm
+xrandr --output $DISPLAY --mode 1920x1080 &
+udiskie -a &
+feh --no-fehbg --randomize --bg-fill ~/wallpapers/* &
+xhost +local: &
+exec dwm 
