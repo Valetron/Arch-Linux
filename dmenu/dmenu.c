@@ -94,7 +94,7 @@ static int
 max_textw(void)
 {
 	int len = 0;
-	for (struct item *item = items; item && item->text; item++)
+	for (struct item *item = items; item && item->text; ++item)
 		len = MAX(TEXTW(item->text), len);
 	return len;
 }
@@ -105,7 +105,7 @@ cleanup(void)
 	size_t i;
 
 	XUngrabKey(dpy, AnyKey, AnyModifier, root);
-	for (i = 0; i < SchemeLast; i++)
+	for (i = 0; i < SchemeLast; ++i)
 		free(scheme[i]);
 	drw_free(drw);
 	XSync(dpy, False);
@@ -117,7 +117,7 @@ cistrstr(const char *s, const char *sub)
 {
 	size_t len;
 
-	for (len = strlen(sub); *s; s++)
+	for (len = strlen(sub); *s; ++s)
 		if (!strncasecmp(s, sub, len))
 			return (char *)s;
 	return NULL;
@@ -211,7 +211,7 @@ grabkeyboard(void)
 	if (embed)
 		return;
 	/* try to grab keyboard, we may have to wait for another process to ungrab */
-	for (i = 0; i < 1000; i++) {
+	for (i = 0; i < 1000; ++i) {
 		if (XGrabKeyboard(dpy, DefaultRootWindow(dpy), True, GrabModeAsync,
 		                  GrabModeAsync, CurrentTime) == GrabSuccess)
 			return;
@@ -240,8 +240,8 @@ match(void)
 
 	matches = lprefix = lsubstr = matchend = prefixend = substrend = NULL;
 	textsize = strlen(text) + 1;
-	for (item = items; item && item->text; item++) {
-		for (i = 0; i < tokc; i++)
+	for (item = items; item && item->text; ++item) {
+		for (i = 0; i < tokc; ++i)
 			if (!fstrstr(item->text, tokv[i]))
 				break;
 		if (i != tokc) /* not all tokens match */
@@ -547,7 +547,7 @@ readstdin(void)
 	unsigned int tmpmax = 0;
 
 	/* read each line from stdin and add it to the item list */
-	for (i = 0; fgets(buf, sizeof buf, stdin); i++) {
+	for (i = 0; fgets(buf, sizeof buf, stdin); ++i) {
 		if (i + 1 >= size / sizeof *items)
 			if (!(items = realloc(items, (size += BUFSIZ))))
 				die("cannot realloc %u bytes:", size);
@@ -622,7 +622,7 @@ setup(void)
 	int a, di, n, area = 0;
 #endif
 	/* init appearance */
-	for (j = 0; j < SchemeLast; j++)
+	for (j = 0; j < SchemeLast; ++j)
 		scheme[j] = drw_scm_create(drw, colors[j], 2);
 
 	clip = XInternAtom(dpy, "CLIPBOARD",   False);
@@ -722,7 +722,7 @@ main(int argc, char *argv[])
 	XWindowAttributes wa;
 	int i, fast = 0;
 
-	for (i = 1; i < argc; i++)
+	for (i = 1; i < argc; ++i)
 		/* these options take no arguments */
 		if (!strcmp(argv[i], "-v")) {      /* prints version information */
 			puts("dmenu-"VERSION);

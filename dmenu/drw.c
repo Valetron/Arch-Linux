@@ -175,7 +175,7 @@ drw_fontset_create(Drw* drw, const char *fonts[], size_t fontcount)
 	if (!drw || !fonts)
 		return NULL;
 
-	for (i = 1; i <= fontcount; i++) {
+	for (i = 1; i <= fontcount; ++i) {
 		if ((cur = xfont_create(drw, fonts[fontcount - i], NULL))) {
 			cur->next = ret;
 			ret = cur;
@@ -217,7 +217,7 @@ drw_scm_create(Drw *drw, const char *clrnames[], size_t clrcount)
 	if (!drw || !clrnames || clrcount < 2 || !(ret = ecalloc(clrcount, sizeof(XftColor))))
 		return NULL;
 
-	for (i = 0; i < clrcount; i++)
+	for (i = 0; i < clrcount; ++i)
 		drw_clr_create(drw, &ret[i], clrnames[i]);
 	return ret;
 }
@@ -310,7 +310,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 		if (utf8strlen) {
 			drw_font_getexts(usedfont, utf8str, utf8strlen, &ew, NULL);
 			/* shorten text if necessary */
-			for (len = MIN(utf8strlen, sizeof(buf) - 1); len && ew > w; len--)
+			for (len = MIN(utf8strlen, sizeof(buf) - 1); len && ew > w; --len)
 				drw_font_getexts(usedfont, utf8str, len, &ew, NULL);
 
 			if (len) {
