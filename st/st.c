@@ -609,7 +609,7 @@ getsel(void)
 	ptr = str = xmalloc(bufsize);
 
 	/* append every set & selected glyph to the selection */
-	for (y = sel.nb.y; y <= sel.ne.y; y++) {
+	for (y = sel.nb.y; y <= sel.ne.y; ++y) {
 		if ((linelen = tlinelen(y)) == 0) {
 			*ptr++ = '\n';
 			continue;
@@ -967,8 +967,8 @@ tattrset(int attr)
 {
 	int i, j;
 
-	for (i = 0; i < term.row-1; i++) {
-		for (j = 0; j < term.col-1; j++) {
+	for (i = 0; i < term.row-1; ++i) {
+		for (j = 0; j < term.col-1; ++j) {
 			if (term.line[i][j].mode & attr)
 				return 1;
 		}
@@ -985,7 +985,7 @@ tsetdirt(int top, int bot)
 	LIMIT(top, 0, term.row-1);
 	LIMIT(bot, 0, term.row-1);
 
-	for (i = top; i <= bot; i++)
+	for (i = top; i <= bot; ++i)
 		term.dirty[i] = 1;
 }
 
@@ -994,8 +994,8 @@ tsetdirtattr(int attr)
 {
 	int i, j;
 
-	for (i = 0; i < term.row-1; i++) {
-		for (j = 0; j < term.col-1; j++) {
+	for (i = 0; i < term.row-1; ++i) {
+		for (j = 0; j < term.col-1; ++j) {
 			if (term.line[i][j].mode & attr) {
 				tsetdirt(i, i);
 				break;
@@ -1044,7 +1044,7 @@ treset(void)
 	memset(term.trantbl, CS_USA, sizeof(term.trantbl));
 	term.charset = 0;
 
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 2; ++i) {
 		tmoveto(0, 0);
 		tcursor(CURSOR_SAVE);
 		tclearregion(0, 0, term.col-1, term.row-1);
@@ -1122,7 +1122,7 @@ tscrolldown(int orig, int n, int copyhist)
 	tsetdirt(orig, term.bot-n);
 	tclearregion(0, term.bot-n+1, term.col-1, term.bot);
 
-	for (i = term.bot; i >= orig+n; i--) {
+	for (i = term.bot; i >= orig+n; --i) {
 		temp = term.line[i];
 		term.line[i] = term.line[i-n];
 		term.line[i-n] = temp;
@@ -1153,7 +1153,7 @@ tscrollup(int orig, int n, int copyhist)
 	tclearregion(0, orig, term.col-1, orig+n-1);
 	tsetdirt(orig+n, term.bot);
 
-	for (i = orig; i <= term.bot-n; i++) {
+	for (i = orig; i <= term.bot-n; ++i) {
 		temp = term.line[i];
 		term.line[i] = term.line[i+n];
 		term.line[i+n] = temp;
@@ -1302,9 +1302,9 @@ tclearregion(int x1, int y1, int x2, int y2)
 	LIMIT(y1, 0, term.row-1);
 	LIMIT(y2, 0, term.row-1);
 
-	for (y = y1; y <= y2; y++) {
+	for (y = y1; y <= y2; ++y) {
 		term.dirty[y] = 1;
-		for (x = x1; x <= x2; x++) {
+		for (x = x1; x <= x2; ++x) {
 			gp = &term.line[y][x];
 			if (selected(x, y))
 				selclear();
@@ -1420,7 +1420,7 @@ tsetattr(const int *attr, int l)
 	int i;
 	int32_t idx;
 
-	for (i = 0; i < l; i++) {
+	for (i = 0; i < l; ++i) {
 		switch (attr[i]) {
 		case 0:
 			term.c.attr.mode &= ~(
@@ -1881,7 +1881,7 @@ csidump(void)
 	uint c;
 
 	fprintf(stderr, "ESC[");
-	for (i = 0; i < csiescseq.len; i++) {
+	for (i = 0; i < csiescseq.len; ++i) {
 		c = csiescseq.buf[i] & 0xff;
 		if (isprint(c)) {
 			putc(c, stderr);
@@ -2006,7 +2006,7 @@ strdump(void)
 	uint c;
 
 	fprintf(stderr, "ESC%c", strescseq.type);
-	for (i = 0; i < strescseq.len; i++) {
+	for (i = 0; i < strescseq.len; ++i) {
 		c = strescseq.buf[i] & 0xff;
 		if (c == '\0') {
 			putc('\n', stderr);
@@ -2554,7 +2554,7 @@ tresize(int col, int row)
 	 * tscrollup would work here, but we can optimize to
 	 * memmove because we're freeing the earlier lines
 	 */
-	for (i = 0; i <= term.c.y - row; i++) {
+	for (i = 0; i <= term.c.y - row; ++i) {
 		free(term.line[i]);
 		free(term.alt[i]);
 	}
@@ -2563,7 +2563,7 @@ tresize(int col, int row)
 		memmove(term.line, term.line + i, row * sizeof(Line));
 		memmove(term.alt, term.alt + i, row * sizeof(Line));
 	}
-	for (i += row; i < term.row; i++) {
+	for (i += row; i < term.row; ++i) {
 		free(term.line[i]);
 		free(term.alt[i]);
 	}
@@ -2574,22 +2574,22 @@ tresize(int col, int row)
 	term.dirty = xrealloc(term.dirty, row * sizeof(*term.dirty));
 	term.tabs = xrealloc(term.tabs, col * sizeof(*term.tabs));
 
-	for (i = 0; i < HISTSIZE; i++) {
+	for (i = 0; i < HISTSIZE; ++i) {
 		term.hist[i] = xrealloc(term.hist[i], col * sizeof(Glyph));
-		for (j = mincol; j < col; j++) {
+		for (j = mincol; j < col; ++j) {
 			term.hist[i][j] = term.c.attr;
 			term.hist[i][j].u = ' ';
 		}
 	}
 
 	/* resize each row to new width, zero-pad if needed */
-	for (i = 0; i < minrow; i++) {
+	for (i = 0; i < minrow; ++i) {
 		term.line[i] = xrealloc(term.line[i], col * sizeof(Glyph));
 		term.alt[i]  = xrealloc(term.alt[i],  col * sizeof(Glyph));
 	}
 
 	/* allocate any new rows */
-	for (/* i = minrow */; i < row; i++) {
+	for (/* i = minrow */; i < row; ++i) {
 		term.line[i] = xmalloc(col * sizeof(Glyph));
 		term.alt[i] = xmalloc(col * sizeof(Glyph));
 	}
@@ -2611,7 +2611,7 @@ tresize(int col, int row)
 	tmoveto(term.c.x, term.c.y);
 	/* Clearing both screens (it makes dirty all lines) */
 	c = term.c;
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 2; ++i) {
 		if (mincol < col && 0 < minrow) {
 			tclearregion(mincol, 0, col - 1, minrow - 1);
 		}
@@ -2635,7 +2635,7 @@ drawregion(int x1, int y1, int x2, int y2)
 {
 	int y;
 
-	for (y = y1; y < y2; y++) {
+	for (y = y1; y < y2; ++y) {
 		if (!term.dirty[y])
 			continue;
 

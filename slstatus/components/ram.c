@@ -41,7 +41,7 @@
 			return NULL;
 		}
 
-		return bprintf("%d", 100 * ((total - free) - (buffers + cached))
+		return bprintf("% -3d", 100 * ((total - free) - (buffers + cached))
                                / total);
 	}
 

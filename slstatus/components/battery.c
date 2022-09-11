@@ -52,7 +52,7 @@
 		} map[] = {
 			{ "Charging",    "+" },
 			{ "Discharging", "-" },
-			{ "Full",        "o" },
+			{ "Full",        "#" },
 		};
 		size_t i;
 		char path[PATH_MAX], state[12];
@@ -65,7 +65,7 @@
 			return NULL;
 		}
 
-		for (i = 0; i < LEN(map); i++) {
+		for (i = 0; i < LEN(map); ++i) {
 			if (!strcmp(map[i].state, state)) {
 				break;
 			}

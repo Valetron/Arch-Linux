@@ -65,17 +65,16 @@ static const char unknown_str[] = "n/a";
  */
 static const struct arg args[] = {
 	/* function format          argument */
-	{ netspeed_rx, " r: %s", "enp0s3"},
-	{ netspeed_tx, " t: %s", "enp0s3"},
-	{ battery_perc, " battery: %s", "BAT0"},
-//	{ separator, "\t", NULL},
+	{ netspeed_rx, " [r: %s]", "wlp3s0"},
+	{ netspeed_tx, " [t: %s]", "wlp3s0"},
+	{ battery_perc, " [battery: %s%%", "BAT0"},
+	{ battery_state, "%s]", "BAT0"},
 //	{ vol_perc, " vol: %s", },
-//	{ wifi_perc, " w/f: %s", "enp0s3"},
-	{ disk_perc, " /root: %   -3s", "/"},
-	{ disk_perc, " /home: %   -3s", "/home"},
-	{ cpu_perc, " cpu: %   -3s", NULL},
-	{ ram_perc, " ram: %   -3s", NULL},
-	{ swap_perc, " swap: %   -3s", NULL},
-	{ keymap, " %s", NULL},
-	{ datetime, " %s", "%d/%m/%y %T" },
+//	{ disk_perc, " /root: %s", "/"},
+//	{ disk_perc, " /home: %s", "/home"},
+//	{ cpu_perc, " cpu: %s", NULL},
+//	{ ram_perc, " ram: %s", NULL},
+//	{ swap_perc, " swap: %s", NULL},
+	{ keymap, " [%s]", NULL},
+	{ datetime, " [%s]", "%d/%m/%y %T" },
 };

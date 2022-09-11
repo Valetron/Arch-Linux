@@ -446,7 +446,7 @@ mouseaction(XEvent *e, uint release)
 	/* ignore Button<N>mask for Button<N> - it's set on release */
 	uint state = e->xbutton.state & ~buttonmask(e->xbutton.button);
 
-	for (ms = mshortcuts; ms < mshortcuts + LEN(mshortcuts); ms++) {
+	for (ms = mshortcuts; ms < mshortcuts + LEN(mshortcuts); ++ms) {
 		if (ms->release == release &&
 		    ms->button == e->xbutton.button &&
 		    (match(ms->mod, state) ||  /* exact or forced */
@@ -796,7 +796,7 @@ xloadcols(void)
 		dc.col = xmalloc(dc.collen * sizeof(Color));
 	}
 
-	for (i = 0; i < dc.collen; i++)
+	for (i = 0; i < dc.collen; ++i)
 		if (!xloadcolor(i, NULL, &dc.col[i])) {
 			if (colorname[i])
 				die("could not allocate color '%s'\n", colorname[i]);
@@ -1274,7 +1274,7 @@ xmakeglyphfontspecs(XftGlyphFontSpec *specs, const Glyph *glyphs, int len, int x
 		}
 
 		/* Fallback on font cache, search the font cache for match. */
-		for (f = 0; f < frclen; f++) {
+		for (f = 0; f < frclen; ++f) {
 			glyphidx = XftCharIndex(xw.dpy, frc[f].font, rune);
 			/* Everything correct. */
 			if (glyphidx && frc[f].flags == frcflags)
@@ -1628,7 +1628,7 @@ xdrawline(Line line, int x1, int y1, int x2)
 
 	numspecs = xmakeglyphfontspecs(specs, &line[x1], x2 - x1, x1, y1);
 	i = ox = 0;
-	for (x = x1; x < x2 && i < numspecs; x++) {
+	for (x = x1; x < x2 && i < numspecs; ++x) {
 		new = line[x];
 		if (new.mode == ATTR_WDUMMY)
 			continue;
@@ -1782,7 +1782,7 @@ kmap(KeySym k, uint state)
 			return NULL;
 	}
 
-	for (kp = key; kp < key + LEN(key); kp++) {
+	for (kp = key; kp < key + LEN(key); ++kp) {
 		if (kp->k != k)
 			continue;
 
@@ -1822,7 +1822,7 @@ kpress(XEvent *ev)
 	else
 		len = XLookupString(e, buf, sizeof buf, &ksym, NULL);
 	/* 1. shortcuts */
-	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); bp++) {
+	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); ++bp) {
 		if (ksym == bp->keysym && match(bp->mod, e->state)) {
 			bp->func(&(bp->arg));
 			return;

@@ -27,7 +27,7 @@ disk_perc(const char *path)
 		return NULL;
 	}
 
-	return bprintf("%d", (int)(100 *
+	return bprintf("% -3d", (int)(100 *
 	               (1.0f - ((float)fs.f_bavail / (float)fs.f_blocks))));
 }
 

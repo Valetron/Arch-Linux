@@ -5,8 +5,9 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Hack:style=bold:pixelsize=16:antialias=true:autohint=true";
-static int borderpx = 2;
+//static char *font = "Hack:style=bold:pixelsize=16:antialias=true:autohint=true";
+static char* font = "unscii:style=16-full:pixelsize=19:antialias=true:autohint=true";
+static int borderpx = 6;
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -122,7 +123,6 @@ static const char *colorname[] = {
 	"#555555",
 };
 
-
 /*
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
@@ -137,8 +137,8 @@ static unsigned int defaultrcs = 257;
  * 2: Block ("█")
  * 4: Underline ("_")
  * 6: Bar ("|")
- * 7: Snowman ("☃")
- */
+ * 7: Snowman ("") - crashes with Hack font
+*/
 static unsigned int cursorshape = 2;
 
 /*

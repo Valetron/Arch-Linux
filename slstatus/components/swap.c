@@ -24,7 +24,7 @@
 		char *line = NULL;
 
 		/* get number of fields we want to extract */
-		for (i = 0, left = 0; i < LEN(ent); i++) {
+		for (i = 0, left = 0; i < LEN(ent); ++i) {
 			if (ent[i].var) {
 				left++;
 			}
@@ -37,7 +37,7 @@
 
 		/* read file line by line and extract field information */
 		while (left > 0 && getline(&line, &line_len, fp) >= 0) {
-			for (i = 0; i < LEN(ent); i++) {
+			for (i = 0; i < LEN(ent); ++i) {
 				if (ent[i].var &&
 				    !strncmp(line, ent[i].name, ent[i].len)) {
 					sscanf(line + ent[i].len + 1,
@@ -78,7 +78,7 @@
 			return NULL;
 		}
 
-		return bprintf("%d", 100 * (total - free - cached) / total);
+		return bprintf("% -3d", 100 * (total - free - cached) / total);
 	}
 
 	const char *
