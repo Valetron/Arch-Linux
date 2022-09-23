@@ -25,7 +25,7 @@ set cursorline
 set cursorcolumn
 
 "autoindent
-set ai
+"set ai
 set cin
 
 set showcmd

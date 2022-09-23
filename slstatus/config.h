@@ -69,12 +69,6 @@ static const struct arg args[] = {
 	{ netspeed_tx, " [t: %s]", "wlp3s0"},
 	{ battery_perc, " [battery: %s%%", "BAT0"},
 	{ battery_state, "%s]", "BAT0"},
-//	{ vol_perc, " vol: %s", },
-//	{ disk_perc, " /root: %s", "/"},
-//	{ disk_perc, " /home: %s", "/home"},
-//	{ cpu_perc, " cpu: %s", NULL},
-//	{ ram_perc, " ram: %s", NULL},
-//	{ swap_perc, " swap: %s", NULL},
 	{ keymap, " [%s]", NULL},
 	{ datetime, " [%s]", "%d/%m/%y %T" },
 };
