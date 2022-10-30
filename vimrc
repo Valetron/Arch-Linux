@@ -30,3 +30,11 @@ set cin
 
 set showcmd
 "set wildmenu
+
+call plug#begin()
+
+    Plug 'valloric/youcompleteme'
+
+call plug#end()
+
+set completeopt=longest,menuone

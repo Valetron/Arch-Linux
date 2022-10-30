@@ -6,7 +6,7 @@
 [[ $- != *i* ]] && return
 
 # don't put duplicate lines or lines starting with space in the history.
-HISTCONTROL=ignoreboth
+#HISTCONTROL=ignoreboth
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -42,4 +42,6 @@ if [ -e /usr/share/terminfo/x/xterm-256color ]; then
 else
     export TERM='xterm-color'
 fi
+
+export HISTCONTROL=ignoreboth
 
