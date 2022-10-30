@@ -2,6 +2,20 @@
 # ~/.bashrc
 #
 
+GREEN="\e[92m"
+RESET_COLOR="\e[0m"
+
+git_branch()
+{
+    BRANCH=$(git branch 2>/dev/null | grep '^*'  | sed 's/* //')
+
+    if [ -z "$BRANCH" ]; then
+        echo ""
+    else
+        echo " $BRANCH"
+    fi
+}
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -35,7 +49,8 @@ alias ip='ip -c'
 alias reboot='sudo reboot'
 alias poweroff='sudo poweroff'
 
-PS1='[\e[34m\$\e[0m\e[1;93m\w\e[0m]: '
+#PS1='[\e[34m\$\e[0m\e[1;93m\w\e[0m]: '
+PS1='[\e[34m\$\e[0m\e[1;93m\w\e[0m]\e[32m$(git_branch)\e[0m: '
 
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
     export TERM='xterm-256color'
