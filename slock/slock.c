@@ -143,7 +143,7 @@ resizerectangles(struct lock *lock)
 {
 	int i;
 
-	for (i = 0; i < LENGTH(rectangles); i++){
+	for (i = 0; i < LENGTH(rectangles); ++i){
 		lock->rectangles[i].x = (rectangles[i].x * logosize)
                                 + lock->xoff + ((lock->mw) / 2) - (logow / 2 * logosize);
 		lock->rectangles[i].y = (rectangles[i].y * logosize)
@@ -226,7 +226,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 			}
 			color = len ? INPUT : ((failure || failonclear) ? FAILED : INIT);
 			if (running && oldc != color) {
-				for (screen = 0; screen < nscreens; screen++) {
+				for (screen = 0; screen < nscreens; ++screen) {
                     if(locks[screen]->bgmap)
                         XSetWindowBackgroundPixmap(dpy, locks[screen]->win, locks[screen]->bgmap);
                     else
@@ -238,7 +238,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 			}
 		} else if (rr->active && ev.type == rr->evbase + RRScreenChangeNotify) {
 			rre = (XRRScreenChangeNotifyEvent*)&ev;
-			for (screen = 0; screen < nscreens; screen++) {
+			for (screen = 0; screen < nscreens; ++screen) {
 				if (locks[screen]->win == rre->window) {
 					if (rre->rotation == RR_Rotate_90 ||
 					    rre->rotation == RR_Rotate_270)
@@ -252,7 +252,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 				}
 			}
 		} else {
-			for (screen = 0; screen < nscreens; screen++)
+			for (screen = 0; screen < nscreens; ++screen)
 				XRaiseWindow(dpy, locks[screen]->win);
 		}
 	}
@@ -289,7 +289,7 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
         imlib_render_image_on_drawable(0, 0);
         imlib_free_image();
     }
-	for (i = 0; i < NUMCOLS; i++) {
+	for (i = 0; i < NUMCOLS; ++i) {
 		XAllocNamedColor(dpy, DefaultColormap(dpy, lock->screen),
 		                 colorname[i], &color, &dummy);
 		lock->colors[i] = color.pixel;
@@ -326,7 +326,8 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
 	                          CWOverrideRedirect | CWBackPixel, &wa);
     if(lock->bgmap)
         XSetWindowBackgroundPixmap(dpy, lock->win, lock->bgmap);
-	lock->pmap = XCreateBitmapFromData(dpy, lock->win, curs, 8, 8);
+	
+    lock->pmap = XCreateBitmapFromData(dpy, lock->win, curs, 8, 8);
 	invisible = XCreatePixmapCursor(dpy, lock->pmap, lock->pmap,
 	                                &color, &color, 0, 0);
 	XDefineCursor(dpy, lock->win, invisible);
@@ -334,7 +335,7 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
 	resizerectangles(lock);
 
 	/* Try to grab mouse pointer *and* keyboard for 600ms, else fail the lock */
-	for (i = 0, ptgrab = kbgrab = -1; i < 6; i++) {
+	for (i = 0, ptgrab = kbgrab = -1; i < 6; ++i) {
 		if (ptgrab != GrabSuccess) {
 			ptgrab = XGrabPointer(dpy, lock->root, False,
 			                      ButtonPressMask | ButtonReleaseMask |
@@ -464,9 +465,9 @@ main(int argc, char **argv) {
 			Imlib_Color pixel; 
 			Imlib_Color* pp;
 			pp = &pixel;
-			for(int j = 0; j < pixelSize && j < height; j++)
+			for(int j = 0; j < pixelSize && j < height; ++j)
 			{
-				for(int i = 0; i < pixelSize && i < width; i++)
+				for(int i = 0; i < pixelSize && i < width; ++i)
 				{
 					imlib_image_query_pixel(x+i,y+j,pp);
 					red += pixel.red;
@@ -494,9 +495,9 @@ main(int argc, char **argv) {
 	nscreens = ScreenCount(dpy);
 	if (!(locks = calloc(nscreens, sizeof(struct lock *))))
 		die("slock: out of memory\n");
-	for (nlocks = 0, s = 0; s < nscreens; s++) {
+	for (nlocks = 0, s = 0; s < nscreens; ++s) {
 		if ((locks[s] = lockscreen(dpy, &rr, s)) != NULL)
-			nlocks++;
+			++nlocks;
 		else
 			break;
 	}
@@ -523,7 +524,7 @@ main(int argc, char **argv) {
 	/* everything is now blank. Wait for the correct password */
 	readpw(dpy, &rr, locks, nscreens, hash);
 
-	for (nlocks = 0, s = 0; s < nscreens; s++) {
+	for (nlocks = 0, s = 0; s < nscreens; ++s) {
 		XFreePixmap(dpy, locks[s]->drawable);
 		XFreeGC(dpy, locks[s]->gc);
 	}
@@ -532,3 +533,4 @@ main(int argc, char **argv) {
 	XCloseDisplay(dpy);
 	return 0;
 }
+
