@@ -28,3 +28,9 @@ Patches:
 - [Copy](https://st.suckless.org/patches/clipboard/) use Ctrl + Y to copy
 - [Paste](https://st.suckless.org/patches/rightclickpaste/) use RightMouse for paste
 - [Scrolling ST](https://st.suckless.org/patches/scrollback/) use Shift + MouseWheel
+
+## SLOCK
+Patches:
+- [Logo pixel screen](https://tools.suckless.org/slock/patches/dwmlogoandblurscreen/)
+- Own patch
+
