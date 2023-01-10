@@ -5,7 +5,7 @@ static const char *group = "users";
 static const char *colorname[NUMCOLS] = {
     [BACKGROUND] = "#000000",
 	[INIT] =   "#ffa500",     /* after initialization */
-	[INPUT] =  "#005577",   /* during input */
+	[INPUT] =  "#deadbf",   /* during input */
 	[FAILED] = "#ff0000",   /* wrong password */
 };
 
