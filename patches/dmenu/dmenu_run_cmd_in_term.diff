@@ -1,0 +1,19 @@
+diff --git a/dmenu/dmenu_run b/dmenu/dmenu_run
+index 834ede5..ca50c39 100755
+--- a/dmenu/dmenu_run
++++ b/dmenu/dmenu_run
+@@ -1,2 +1,13 @@
+ #!/bin/sh
+-dmenu_path | dmenu "$@" | ${SHELL:-"/bin/sh"} &
++
++# dmenu_run improved
++# command ending with '!', is started in the terminal.
++
++test -s "$HOME"/.dmenurc && . "$HOME"/.dmenurc
++
++cmd="$(dmenu_path | dmenu "$@")"
++
++case $cmd in
++    *\!) "${TERMINAL:-st}" -e "${cmd%?}" & ;;
++    *)   "${cmd}" & ;;
++esac
