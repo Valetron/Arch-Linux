@@ -1,0 +1,144 @@
+diff --git a/dmenu/arg.h b/dmenu/arg.h
+index e94e02b..f23c2bf 100644
+--- a/dmenu/arg.h
++++ b/dmenu/arg.h
+@@ -12,7 +12,7 @@ extern char *argv0;
+ #define ARGBEGIN	for (argv0 = *argv, argv++, argc--;\
+ 					argv[0] && argv[0][0] == '-'\
+ 					&& argv[0][1];\
+-					argc--, argv++) {\
++					--argc, ++argv) {\
+ 				char argc_;\
+ 				char **argv_;\
+ 				int brk_;\
+@@ -23,7 +23,7 @@ extern char *argv0;
+ 				}\
+ 				for (brk_ = 0, argv[0]++, argv_ = argv;\
+ 						argv[0][0] && !brk_;\
+-						argv[0]++) {\
++						++argv[0]) {\
+ 					if (argv_ != argv)\
+ 						break;\
+ 					argc_ = argv[0][0];\
+diff --git a/dmenu/dmenu.c b/dmenu/dmenu.c
+index 0d5530b..74ce2a2 100644
+--- a/dmenu/dmenu.c
++++ b/dmenu/dmenu.c
+@@ -101,7 +101,7 @@ static int
+ max_textw(void)
+ {
+ 	int len = 0;
+-	for (struct item *item = items; item && item->text; item++)
++	for (struct item *item = items; item && item->text; ++item)
+ 		len = MAX(TEXTW(item->text), len);
+ 	return len;
+ }
+@@ -112,7 +112,7 @@ cleanup(void)
+ 	size_t i;
+ 
+ 	XUngrabKey(dpy, AnyKey, AnyModifier, root);
+-	for (i = 0; i < SchemeLast; i++)
++	for (i = 0; i < SchemeLast; ++i)
+ 		free(scheme[i]);
+ 	for (i = 0; items && items[i].text; ++i)
+ 		free(items[i].text);
+@@ -228,7 +228,7 @@ grabkeyboard(void)
+ 	if (embed)
+ 		return;
+ 	/* try to grab keyboard, we may have to wait for another process to ungrab */
+-	for (i = 0; i < 1000; i++) {
++	for (i = 0; i < 1000; ++i) {
+ 		if (XGrabKeyboard(dpy, DefaultRootWindow(dpy), True, GrabModeAsync,
+ 		                  GrabModeAsync, CurrentTime) == GrabSuccess)
+ 			return;
+@@ -257,8 +257,8 @@ match(void)
+ 
+ 	matches = lprefix = lsubstr = matchend = prefixend = substrend = NULL;
+ 	textsize = strlen(text) + 1;
+-	for (item = items; item && item->text; item++) {
+-		for (i = 0; i < tokc; i++)
++	for (item = items; item && item->text; ++item) {
++		for (i = 0; i < tokc; ++i)
+ 			if (!fstrstr(item->text, tokv[i]))
+ 				break;
+ 		if (i != tokc) /* not all tokens match */
+@@ -564,7 +564,7 @@ readstdin(void)
+ 	ssize_t len;
+ 
+ 	/* read each line from stdin and add it to the item list */
+-	for (i = 0; (len = getline(&line, &junk, stdin)) != -1; i++) {
++	for (i = 0; (len = getline(&line, &junk, stdin)) != -1; ++i) {
+ 		if (i + 1 >= itemsiz) {
+ 			itemsiz += 256;
+ 			if (!(items = realloc(items, itemsiz * sizeof(*items))))
+@@ -597,7 +597,7 @@ run(void)
+ 			cleanup();
+ 			exit(1);
+ 		case Expose:
+-			if (ev.xexpose.count == 0)
++			if (0 == ev.xexpose.count)
+ 				drw_map(drw, win, 0, 0, mw, mh);
+ 			break;
+ 		case FocusIn:
+@@ -661,7 +661,7 @@ setup(void)
+ 			} while (w != root && w != pw);
+ 			/* find xinerama screen with which the window intersects most */
+ 			if (XGetWindowAttributes(dpy, pw, &wa))
+-				for (j = 0; j < n; j++)
++				for (j = 0; j < n; ++j)
+ 					if ((a = INTERSECT(wa.x, wa.y, wa.width, wa.height, info[j])) > area) {
+ 						area = a;
+ 						i = j;
+@@ -669,7 +669,7 @@ setup(void)
+ 		}
+ 		/* no focused window is on screen, so use pointer location instead */
+ 		if (mon < 0 && !area && XQueryPointer(dpy, root, &dw, &dw, &x, &y, &di, &di, &du))
+-			for (i = 0; i < n; i++)
++			for (i = 0; i < n; ++i)
+ 				if (INTERSECT(x, y, 1, 1, info[i]) != 0)
+ 					break;
+ 
+@@ -750,7 +750,7 @@ main(int argc, char *argv[])
+ 	XWindowAttributes wa;
+ 	int i, fast = 0;
+ 
+-	for (i = 1; i < argc; i++)
++	for (i = 1; i < argc; ++i)
+ 		/* these options take no arguments */
+ 		if (!strcmp(argv[i], "-v")) {      /* prints version information */
+ 			puts("dmenu-"VERSION);
+diff --git a/dmenu/drw.c b/dmenu/drw.c
+index a58a2b4..f83a66e 100644
+--- a/dmenu/drw.c
++++ b/dmenu/drw.c
+@@ -162,7 +162,7 @@ drw_fontset_create(Drw* drw, const char *fonts[], size_t fontcount)
+ 	if (!drw || !fonts)
+ 		return NULL;
+ 
+-	for (i = 1; i <= fontcount; i++) {
++	for (i = 1; i <= fontcount; ++i) {
+ 		if ((cur = xfont_create(drw, fonts[fontcount - i], NULL))) {
+ 			cur->next = ret;
+ 			ret = cur;
+@@ -204,7 +204,7 @@ drw_scm_create(Drw *drw, const char *clrnames[], size_t clrcount)
+ 	if (!drw || !clrnames || clrcount < 2 || !(ret = ecalloc(clrcount, sizeof(XftColor))))
+ 		return NULL;
+ 
+-	for (i = 0; i < clrcount; i++)
++	for (i = 0; i < clrcount; ++i)
+ 		drw_clr_create(drw, &ret[i], clrnames[i]);
+ 	return ret;
+ }
+diff --git a/dmenu/stest.c b/dmenu/stest.c
+index e27d3a5..304f01d 100644
+--- a/dmenu/stest.c
++++ b/dmenu/stest.c
+@@ -90,7 +90,7 @@ main(int argc, char *argv[])
+ 		}
+ 		free(line);
+ 	} else {
+-		for (; argc; argc--, argv++) {
++		for (; argc; --argc, ++argv) {
+ 			if (FLAG('l') && (dir = opendir(*argv))) {
+ 				/* test directory contents */
+ 				while ((d = readdir(dir))) {
