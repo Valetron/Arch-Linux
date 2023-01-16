@@ -90,7 +90,7 @@ main(int argc, char *argv[])
 		}
 		free(line);
 	} else {
-		for (; argc; argc--, argv++) {
+		for (; argc; --argc, ++argv) {
 			if (FLAG('l') && (dir = opendir(*argv))) {
 				/* test directory contents */
 				while ((d = readdir(dir))) {
