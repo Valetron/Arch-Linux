@@ -5,9 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-//static char *font = "Hack:style=bold:pixelsize=16:antialias=true:autohint=true";
-static char* font = "unscii:style=16-full:pixelsize=19:antialias=true:autohint=true";
-static int borderpx = 6;
+static char *font = "unscii:style=16-full:pixelsize=19:antialias=true:autohint=true";
+static int borderpx = 7;
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -17,7 +16,7 @@ static int borderpx = 6;
  * 4: value of shell in /etc/passwd
  * 5: value of shell in config.h
  */
-static char *shell = "/bin/bash";
+static char *shell = "/bin/sh";
 char *utmp = NULL;
 /* scroll program: to enable use a string like "scroll" */
 char *scroll = NULL;
@@ -121,15 +120,18 @@ static const char *colorname[] = {
 	/* more colors can be added after 255 to use with DefaultXX */
 	"#cccccc",
 	"#555555",
+	"gray90", /* default foreground colour */
+	"black", /* default background colour */
 };
+
 
 /*
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
  */
-unsigned int defaultfg = 7;
-unsigned int defaultbg = 0;
-static unsigned int defaultcs = 256;
+unsigned int defaultfg = 258;
+unsigned int defaultbg = 259;
+unsigned int defaultcs = 256;
 static unsigned int defaultrcs = 257;
 
 /*
@@ -137,8 +139,8 @@ static unsigned int defaultrcs = 257;
  * 2: Block ("█")
  * 4: Underline ("_")
  * 6: Bar ("|")
- * 7: Snowman ("") - crashes with Hack font
-*/
+ * 7: Snowman ("☃")
+ */
 static unsigned int cursorshape = 2;
 
 /*
@@ -280,7 +282,7 @@ static Key key[] = {
 	{ XK_KP_Delete,     ControlMask,    "\033[3;5~",    +1,    0},
 	{ XK_KP_Delete,     ShiftMask,      "\033[2K",      -1,    0},
 	{ XK_KP_Delete,     ShiftMask,      "\033[3;2~",    +1,    0},
-	{ XK_KP_Delete,     XK_ANY_MOD,     "\033[P",       -1,    0},
+	{ XK_KP_Delete,     XK_ANY_MOD,     "\033[3~",       -1,    0},
 	{ XK_KP_Delete,     XK_ANY_MOD,     "\033[3~",      +1,    0},
 	{ XK_KP_Multiply,   XK_ANY_MOD,     "\033Oj",       +2,    0},
 	{ XK_KP_Add,        XK_ANY_MOD,     "\033Ok",       +2,    0},
@@ -348,7 +350,7 @@ static Key key[] = {
 	{ XK_Delete,        ControlMask,    "\033[3;5~",    +1,    0},
 	{ XK_Delete,        ShiftMask,      "\033[2K",      -1,    0},
 	{ XK_Delete,        ShiftMask,      "\033[3;2~",    +1,    0},
-	{ XK_Delete,        XK_ANY_MOD,     "\033[P",       -1,    0},
+	{ XK_Delete,        XK_ANY_MOD,     "\033[3~",       -1,    0},
 	{ XK_Delete,        XK_ANY_MOD,     "\033[3~",      +1,    0},
 	{ XK_BackSpace,     XK_NO_MOD,      "\177",          0,    0},
 	{ XK_BackSpace,     Mod1Mask,       "\033\177",      0,    0},
