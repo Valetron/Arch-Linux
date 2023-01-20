@@ -12,19 +12,19 @@ extern char *argv0;
 #define ARGBEGIN	for (argv0 = *argv, argv++, argc--;\
 					argv[0] && argv[0][0] == '-'\
 					&& argv[0][1];\
-					--argc, ++argv) {\
+					argc--, argv++) {\
 				char argc_;\
 				char **argv_;\
 				int brk_;\
 				if (argv[0][1] == '-' && argv[0][2] == '\0') {\
-					++argv;\
-					--argc;\
+					argv++;\
+					argc--;\
 					break;\
 				}\
 				int i_;\
 				for (i_ = 1, brk_ = 0, argv_ = argv;\
 						argv[0][i_] && !brk_;\
-						++i_) {\
+						i_++) {\
 					if (argv_ != argv)\
 						break;\
 					argc_ = argv[0][i_];\
