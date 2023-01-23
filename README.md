@@ -31,6 +31,7 @@ Patches:
 Patches:
 - [Add delete key support](https://st.suckless.org/patches/delkey/)
 - [Scrolling ST](https://st.suckless.org/patches/scrollback/) use Shift + MouseWheel
+- [Remove vacant space under the ST](https://st.suckless.org/patches/anysize/)
 
 ## SLOCK
 Patches:
