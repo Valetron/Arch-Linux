@@ -9,7 +9,7 @@
 #fi
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && brightnessctl set 0% -d tpacpi::power && exec startx
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then

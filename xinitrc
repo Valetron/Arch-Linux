@@ -1,4 +1,4 @@
-#!/bin/sh
+#/bin/sh
 
 userresources=$HOME/.Xresources
 usermodmap=$HOME/.Xmodmap
@@ -37,5 +37,9 @@ slstatus &
 xrandr --output $DISPLAY --mode 1920x1080 &
 udiskie -a &
 feh --no-fehbg --randomize --bg-fill ~/wallpapers/* &
-xhost +local: &
-exec dwm 
+
+while true; do
+    dwm > /dev/null 2>&1
+done
+                                                    
+#exec dwm
