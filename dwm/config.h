@@ -7,7 +7,7 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const unsigned int minwsz    = 20;       /* Minimal heigt of a client for smfact */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int user_bh            = 2;        /* 2 is the default spacing around the bar's font */
+static const int user_bh            = 3;        /* 2 is the default spacing around the bar's font */
 static const char *fonts[]          = {"unscii:style=16-full:pixelsize=20:antialias=true:autohint=true"};
 static const char dmenufont[]       = "unscii:style=16-full:pixelsize=20:antialias=true:autohint=true";
 static const char col_black[]       = "#000000";

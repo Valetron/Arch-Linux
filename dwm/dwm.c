@@ -297,7 +297,7 @@ applyrules(Client *c)
 	class    = ch.res_class ? ch.res_class : broken;
 	instance = ch.res_name  ? ch.res_name  : broken;
 
-	for (i = 0; i < LENGTH(rules); i++) {
+	for (i = 0; i < LENGTH(rules); ++i) {
 		r = &rules[i];
 		if ((!r->title || strstr(c->name, r->title))
 		&& (!r->class || strstr(class, r->class))
@@ -461,7 +461,7 @@ buttonpress(XEvent *e)
 		XAllowEvents(dpy, ReplayPointer, CurrentTime);
 		click = ClkClientWin;
 	}
-	for (i = 0; i < LENGTH(buttons); i++)
+	for (i = 0; i < LENGTH(buttons); ++i)
 		if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
 		&& CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
 			buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
@@ -494,9 +494,9 @@ cleanup(void)
 	XUngrabKey(dpy, AnyKey, AnyModifier, root);
 	while (mons)
 		cleanupmon(mons);
-	for (i = 0; i < CurLast; i++)
+	for (i = 0; i < CurLast; ++i)
 		drw_cur_free(drw, cursor[i]);
-	for (i = 0; i < LENGTH(colors); i++)
+	for (i = 0; i < LENGTH(colors); ++i)
 		free(scheme[i]);
 	free(scheme);
 	XDestroyWindow(dpy, wmcheckwin);
@@ -788,6 +788,8 @@ expose(XEvent *e)
 void
 focus(Client *c)
 {
+	XWindowChanges wc;
+
 	if (!c || !ISVISIBLE(c))
 		for (c = selmon->stack; c && !ISVISIBLE(c); c = c->snext);
 	if (selmon->sel && selmon->sel != c)
@@ -803,6 +805,11 @@ focus(Client *c)
 		attachstack(c);
 		grabbuttons(c, 1);
 		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+		if (!c->isfloating) {
+			wc.sibling = selmon->barwin;
+			wc.stack_mode = Below;
+			XConfigureWindow(dpy, c->win, CWSibling | CWStackMode, &wc);
+		}
 		setfocus(c);
 	} else {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
@@ -940,9 +947,9 @@ grabbuttons(Client *c, int focused)
 		if (!focused)
 			XGrabButton(dpy, AnyButton, AnyModifier, c->win, False,
 				BUTTONMASK, GrabModeSync, GrabModeSync, None, None);
-		for (i = 0; i < LENGTH(buttons); i++)
+		for (i = 0; i < LENGTH(buttons); ++i)
 			if (buttons[i].click == ClkClientWin)
-				for (j = 0; j < LENGTH(modifiers); j++)
+				for (j = 0; j < LENGTH(modifiers); ++j)
 					XGrabButton(dpy, buttons[i].button,
 						buttons[i].mask | modifiers[j],
 						c->win, False, BUTTONMASK,
@@ -965,11 +972,11 @@ grabkeys(void)
 		syms = XGetKeyboardMapping(dpy, start, end - start + 1, &skip);
 		if (!syms)
 			return;
-		for (k = start; k <= end; k++)
-			for (i = 0; i < LENGTH(keys); i++)
+		for (k = start; k <= end; ++k)
+			for (i = 0; i < LENGTH(keys); ++i)
 				/* skip modifier codes, we do that ourselves */
 				if (keys[i].keysym == syms[(k - start) * skip])
-					for (j = 0; j < LENGTH(modifiers); j++)
+					for (j = 0; j < LENGTH(modifiers); ++j)
 						XGrabKey(dpy, k,
 							 keys[i].mod | modifiers[j],
 							 root, True,
@@ -1006,7 +1013,7 @@ keypress(XEvent *e)
 
 	ev = &e->xkey;
 	keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
-	for (i = 0; i < LENGTH(keys); i++)
+	for (i = 0; i < LENGTH(keys); ++i)
 		if (keysym == keys[i].keysym
 		&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
 		&& keys[i].func)
@@ -1119,11 +1126,11 @@ monocle(Monitor *m)
 
 	for (c = m->clients; c; c = c->next)
 		if (ISVISIBLE(c))
-			n++;
+			++n;
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
+		resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
 }
 
 void
@@ -1410,14 +1417,14 @@ scan(void)
 	XWindowAttributes wa;
 
 	if (XQueryTree(dpy, root, &d1, &d2, &wins, &num)) {
-		for (i = 0; i < num; i++) {
+		for (i = 0; i < num; ++i) {
 			if (!XGetWindowAttributes(dpy, wins[i], &wa)
 			|| wa.override_redirect || XGetTransientForHint(dpy, wins[i], &d1))
 				continue;
 			if (wa.map_state == IsViewable || getstate(wins[i]) == IconicState)
 				manage(wins[i], &wa);
 		}
-		for (i = 0; i < num; i++) { /* now the transients */
+		for (i = 0; i < num; ++i) { /* now the transients */
 			if (!XGetWindowAttributes(dpy, wins[i], &wa))
 				continue;
 			if (XGetTransientForHint(dpy, wins[i], &d1)
@@ -1706,32 +1713,42 @@ tile(Monitor *m)
 		mw = m->nmaster ? m->ww * m->mfact : 0;
 	else
 		mw = m->ww;
-	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), ++i)
 		if (i < m->nmaster) {
 			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
-			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+
+			if (n == 1)
+				resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
+			else
+				resize(c, m->wx - c->bw, m->wy + my, mw - c->bw, h - c->bw, False);
+
 			if (my + HEIGHT(c) < m->wh)
-				my += HEIGHT(c);
-		} else {
+				my += HEIGHT(c) - c->bw;
+		}
+        else
+        {
 			smh = m->mh * m->smfact;
-			if(!(nexttiled(c->next)))
+			
+            if(!(nexttiled(c->next)))
 				h = (m->wh - ty) / (n - i);
 			else
 				h = (m->wh - smh - ty) / (n - i);
-			if(h < minwsz) {
+			
+            if(h < minwsz)
+            {
 				c->isfloating = True;
 				XRaiseWindow(dpy, c->win);
 				resize(c, m->mx + (m->mw / 2 - WIDTH(c) / 2), m->my + (m->mh / 2 - HEIGHT(c) / 2), m->ww - mw - (2*c->bw), h - (2*c->bw), False);
 				ty -= HEIGHT(c);
 			}
 			else
-				resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), False);
+				resize(c, m->wx + mw - c->bw, m->wy + ty, m->ww - mw, h - c->bw, False);
 			
             if(!(nexttiled(c->next)))
 				ty += HEIGHT(c) + smh;
 			
             else
-				ty += HEIGHT(c);
+				ty += HEIGHT(c) - c->bw;
 		}
 }
 
@@ -1765,11 +1782,11 @@ resetcanfocusfloating()
 	unsigned int i, n;
 	Client *c;
 
-	for (n = 0, c = selmon->clients; c; c = c->next, n++);
+	for (n = 0, c = selmon->clients; c; c = c->next, ++n);
 	if (n == 0)
 		return;
 
-	for (i = 0, c = selmon->clients; c; c = c->next, i++)
+	for (i = 0, c = selmon->clients; c; c = c->next, ++i)
     if (c->isfloating)
       c->cantfocus = 0;
 
@@ -1798,7 +1815,7 @@ togglecanfocusfloating(const Arg *arg)
         if (c->isfloating)
             c->cantfocus = !c->cantfocus;
         else
-            n++;
+            ++n;
 
     if (n && selmon->sel->isfloating) {
         c = nexttiled(selmon->clients);
@@ -1951,24 +1968,24 @@ updategeom(void)
 		XineramaScreenInfo *info = XineramaQueryScreens(dpy, &nn);
 		XineramaScreenInfo *unique = NULL;
 
-		for (n = 0, m = mons; m; m = m->next, n++);
+		for (n = 0, m = mons; m; m = m->next, ++n);
 		/* only consider unique geometries as separate screens */
 		unique = ecalloc(nn, sizeof(XineramaScreenInfo));
-		for (i = 0, j = 0; i < nn; i++)
+		for (i = 0, j = 0; i < nn; ++i)
 			if (isuniquegeom(unique, j, &info[i]))
 				memcpy(&unique[j++], &info[i], sizeof(XineramaScreenInfo));
 		XFree(info);
 		nn = j;
 
 		/* new monitors if nn > n */
-		for (i = n; i < nn; i++) {
+		for (i = n; i < nn; ++i) {
 			for (m = mons; m && m->next; m = m->next);
 			if (m)
 				m->next = createmon();
 			else
 				mons = createmon();
 		}
-		for (i = 0, m = mons; i < nn && m; m = m->next, i++)
+		for (i = 0, m = mons; i < nn && m; m = m->next, ++i)
 			if (i >= n
 			|| unique[i].x_org != m->mx || unique[i].y_org != m->my
 			|| unique[i].width != m->mw || unique[i].height != m->mh)
@@ -1982,7 +1999,7 @@ updategeom(void)
 				updatebarpos(m);
 			}
 		/* removed monitors if n > nn */
-		for (i = nn; i < n; i++) {
+		for (i = nn; i < n; ++i) {
 			for (m = mons; m && m->next; m = m->next);
 			while ((c = m->clients)) {
 				dirty = 1;
@@ -2024,8 +2041,8 @@ updatenumlockmask(void)
 
 	numlockmask = 0;
 	modmap = XGetModifierMapping(dpy);
-	for (i = 0; i < 8; i++)
-		for (j = 0; j < modmap->max_keypermod; j++)
+	for (i = 0; i < 8; ++i)
+		for (j = 0; j < modmap->max_keypermod; ++j)
 			if (modmap->modifiermap[i * modmap->max_keypermod + j]
 				== XKeysymToKeycode(dpy, XK_Num_Lock))
 				numlockmask = (1 << i);
