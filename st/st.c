@@ -1026,8 +1026,8 @@ tattrset(int attr)
 {
 	int i, j;
 
-	for (i = 0; i < term.row-1; i++) {
-		for (j = 0; j < term.col-1; j++) {
+	for (i = 0; i < term.row-1; ++i) {
+		for (j = 0; j < term.col-1; ++j) {
 			if (term.line[i][j].mode & attr)
 				return 1;
 		}
@@ -1044,7 +1044,7 @@ tsetdirt(int top, int bot)
 	LIMIT(top, 0, term.row-1);
 	LIMIT(bot, 0, term.row-1);
 
-	for (i = top; i <= bot; i++)
+	for (i = top; i <= bot; ++i)
 		term.dirty[i] = 1;
 }
 
@@ -1053,8 +1053,8 @@ tsetdirtattr(int attr)
 {
 	int i, j;
 
-	for (i = 0; i < term.row-1; i++) {
-		for (j = 0; j < term.col-1; j++) {
+	for (i = 0; i < term.row-1; ++i) {
+		for (j = 0; j < term.col-1; ++j) {
 			if (term.line[i][j].mode & attr) {
 				term.dirty[i] = 1;
 				break;
@@ -1066,7 +1066,7 @@ tsetdirtattr(int attr)
 void
 tfulldirt(void)
 {
-  for (int i = 0; i < term.row; i++)
+  for (int i = 0; i < term.row; ++i)
 		term.dirty[i] = 1;
 }
 
@@ -1111,10 +1111,10 @@ treset(void)
 	term.charset = 0;
 
   selremove();
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 2; ++i) {
   	tcursor(CURSOR_SAVE); /* reset saved cursor */
-		for (y = 0; y < term.row; y++)
-			for (x = 0; x < term.col; x++)
+		for (y = 0; y < term.row; ++y)
+			for (x = 0; x < term.col; ++x)
 				tclearglyph(&term.line[y][x], 0);
 		tswapscreen();
 	}
@@ -1126,16 +1126,16 @@ tnew(int col, int row)
 {
 	int i, j;
 
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 2; ++i) {
 		term.line = xmalloc(row * sizeof(Line));
-		for (j = 0; j < row; j++)
+		for (j = 0; j < row; ++j)
 			term.line[j] = xmalloc(col * sizeof(Glyph));
 		term.col = col, term.row = row;
 		tswapscreen();
 	}
 	term.dirty = xmalloc(row * sizeof(*term.dirty));
 	term.tabs = xmalloc(col * sizeof(*term.tabs));
-	for (i = 0; i < HISTSIZE; i++)
+	for (i = 0; i < HISTSIZE; ++i)
 		term.hist[i] = xmalloc(col * sizeof(Glyph));
   treset();
 }
@@ -1255,7 +1255,7 @@ tscrolldown(int top, int n)
 	tsetdirt(top, bot-n);
 	tclearregion(0, bot-n+1, term.col-1, bot, 1);
 
-	for (i = bot; i >= top+n; i--) {
+	for (i = bot; i >= top+n; --i) {
 		temp = term.line[i];
 		term.line[i] = term.line[i-n];
 		term.line[i-n] = temp;
@@ -1278,7 +1278,7 @@ tscrollup(int top, int bot, int n, int mode)
 	n = MIN(n, bot-top+1);
 
 	if (savehist) {
-		for (i = 0; i < n; i++) {
+		for (i = 0; i < n; ++i) {
 			term.histi = (term.histi + 1) % HISTSIZE;
 			temp = term.hist[term.histi];
 			for (j = 0; j < term.col; j++)
@@ -1466,9 +1466,9 @@ tclearregion(int x1, int y1, int x2, int y2, int usecurattr)
 	if (regionselected(x1+term.scr, y1+term.scr, x2+term.scr, y2+term.scr))
 		selremove();
 
-	for (y = y1; y <= y2; y++) {
+	for (y = y1; y <= y2; ++y) {
 		term.dirty[y] = 1;
-		for (x = x1; x <= x2; x++)
+		for (x = x1; x <= x2; ++x)
 			tclearglyph(&term.line[y][x], usecurattr);
 	}
 }
@@ -1580,7 +1580,7 @@ tsetattr(const int *attr, int l)
 	int i;
 	int32_t idx;
 
-	for (i = 0; i < l; i++) {
+	for (i = 0; i < l; ++i) {
 		switch (attr[i]) {
 		case 0:
 			term.c.attr.mode &= ~(
@@ -1936,7 +1936,7 @@ csihandle(void)
 			tscrollup(0, term.row-1, term.row, SCROLL_SAVEHIST); */
       
 			/* alacritty does this: */
-			for (n = term.row-1; n >= 0 && tlinelen(term.line[n]) == 0; n--);
+			for (n = term.row-1; n >= 0 && tlinelen(term.line[n]) == 0; --n);
 			if (n >= 0)
 				tscrollup(0, term.row-1, n+1, SCROLL_SAVEHIST);
 			tscrollup(0, term.row-1, term.row-n-1, SCROLL_NOSAVEHIST);
@@ -2046,7 +2046,7 @@ csidump(void)
 	uint c;
 
 	fprintf(stderr, "ESC[");
-	for (i = 0; i < csiescseq.len; i++) {
+	for (i = 0; i < csiescseq.len; ++i) {
 		c = csiescseq.buf[i] & 0xff;
 		if (isprint(c)) {
 			putc(c, stderr);
@@ -2222,7 +2222,7 @@ strdump(void)
 	uint c;
 
 	fprintf(stderr, "ESC%c", strescseq.type);
-	for (i = 0; i < strescseq.len; i++) {
+	for (i = 0; i < strescseq.len; ++i) {
 		c = strescseq.buf[i] & 0xff;
 		if (c == '\0') {
 			putc('\n', stderr);
