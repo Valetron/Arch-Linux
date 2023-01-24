@@ -16,7 +16,9 @@ static const char col_orange[]      = "#ffa500";
 static const char col_gray[]      = "#bbbbbb";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
-	[SchemeNorm] = { col_white, col_black, col_gray},
+    /*               bat text   bar          inactive client*/
+	[SchemeNorm] = { col_white, col_black,   col_gray },
+    /*               tag number active tag   active client*/                            
 	[SchemeSel]  = { col_white, col_orange,  col_orange },
 };
 
