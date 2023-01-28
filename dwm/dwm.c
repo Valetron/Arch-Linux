@@ -210,6 +210,7 @@ static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
+static int singularborder_baradjustment(Client *c);
 static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
@@ -1130,7 +1131,7 @@ monocle(Monitor *m)
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-		resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
+		resize(c, m->wx - c->bw, m->wy - singularborder_baradjustment(c), m->ww, m->wh - c->bw * m->showbar, 0);
 }
 
 void
@@ -1295,13 +1296,6 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	c->oldw = c->w; c->w = wc.width = w;
 	c->oldh = c->h; c->h = wc.height = h;
 	wc.border_width = c->bw;
-	if (((nexttiled(c->mon->clients) == c && !nexttiled(c->next))
-	    || &monocle == c->mon->lt[c->mon->sellt]->arrange)
-	    && !c->isfullscreen && !c->isfloating) {
-		c->w = wc.width += c->bw * 2;
-		c->h = wc.height += c->bw * 2;
-		wc.border_width = 0;
-	}
 	XConfigureWindow(dpy, c->win, CWX|CWY|CWWidth|CWHeight|CWBorderWidth, &wc);
 	configure(c);
 	XSync(dpy, False);
@@ -1674,6 +1668,12 @@ sigchld(int unused)
 	while (0 < waitpid(-1, NULL, WNOHANG));
 }
 
+int
+singularborder_baradjustment(Client *c)
+{
+	return c->bw * !(c->mon->showbar && topbar);
+}
+
 void
 spawn(const Arg *arg)
 {
@@ -1725,9 +1725,9 @@ tile(Monitor *m)
 			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
 
 			if (n == 1)
-				resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
+				resize(c, m->wx - c->bw, m->wy - singularborder_baradjustment(c), m->ww, m->wh - c->bw * m->showbar, 0);
 			else
-				resize(c, m->wx - c->bw, m->wy + my, mw - c->bw, h - c->bw, False);
+				resize(c, m->wx - c->bw, m->wy + my - singularborder_baradjustment(c), mw - c->bw, h - c->bw * m->showbar, 0);
 
 			if (my + HEIGHT(c) < m->wh)
 				my += HEIGHT(c) - c->bw;
@@ -1749,11 +1749,10 @@ tile(Monitor *m)
 				ty -= HEIGHT(c);
 			}
 			else
-				resize(c, m->wx + mw - c->bw, m->wy + ty, m->ww - mw, h - c->bw, False);
+				resize(c, m->wx + mw - c->bw, m->wy + ty - singularborder_baradjustment(c), m->ww - mw, h - c->bw * m->showbar, 0);
 			
             if(!(nexttiled(c->next)))
 				ty += HEIGHT(c) + smh;
-			
             else
 				ty += HEIGHT(c) - c->bw;
 		}
