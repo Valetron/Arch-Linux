@@ -13,6 +13,7 @@ Patches:
 - [unFocus floating windows](https://dwm.suckless.org/patches/canfocusfloating/)
 - [Move clients in stack](https://dwm.suckless.org/patches/movestack/)
 - [Remove borders](https://dwm.suckless.org/patches/singularborders/)
+- [Save float window position & size](https://dwm.suckless.org/patches/save_floats/)
 
 My keys rules:
 * ModKey + ↓, ↑ to change stack size;

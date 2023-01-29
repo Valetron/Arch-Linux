@@ -89,6 +89,7 @@ struct Client {
 	char name[256];
 	float mina, maxa;
 	int x, y, w, h;
+	int sfx, sfy, sfw, sfh; /* stored float geometry, used on mode revert */
 	int oldx, oldy, oldw, oldh;
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh, hintsvalid;
 	int bw, oldbw;
@@ -210,6 +211,7 @@ static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
+static int singularborder_baradjustment(Client *c);
 static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
@@ -1076,6 +1078,10 @@ manage(Window w, XWindowAttributes *wa)
 	updatewindowtype(c);
 	updatesizehints(c);
 	updatewmhints(c);
+	c->sfx = c->x;
+	c->sfy = c->y;
+	c->sfw = c->w;
+	c->sfh = c->h;
 	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
 	grabbuttons(c, 0);
 	if (!c->isfloating)
@@ -1130,7 +1136,7 @@ monocle(Monitor *m)
 	if (n > 0) /* override layout symbol */
 		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
-		resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
+		resize(c, m->wx - c->bw, m->wy - singularborder_baradjustment(c), m->ww, m->wh - c->bw * m->showbar, 0);
 }
 
 void
@@ -1667,6 +1673,12 @@ sigchld(int unused)
 	while (0 < waitpid(-1, NULL, WNOHANG));
 }
 
+int
+singularborder_baradjustment(Client *c)
+{
+	return c->bw * !(c->mon->showbar && topbar);
+}
+
 void
 spawn(const Arg *arg)
 {
@@ -1718,9 +1730,9 @@ tile(Monitor *m)
 			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
 
 			if (n == 1)
-				resize(c, m->wx - c->bw, m->wy, m->ww, m->wh, False);
+				resize(c, m->wx - c->bw, m->wy - singularborder_baradjustment(c), m->ww, m->wh - c->bw * m->showbar, 0);
 			else
-				resize(c, m->wx - c->bw, m->wy + my, mw - c->bw, h - c->bw, False);
+				resize(c, m->wx - c->bw, m->wy + my - singularborder_baradjustment(c), mw - c->bw, h - c->bw * m->showbar, 0);
 
 			if (my + HEIGHT(c) < m->wh)
 				my += HEIGHT(c) - c->bw;
@@ -1742,11 +1754,10 @@ tile(Monitor *m)
 				ty -= HEIGHT(c);
 			}
 			else
-				resize(c, m->wx + mw - c->bw, m->wy + ty, m->ww - mw, h - c->bw, False);
+				resize(c, m->wx + mw - c->bw, m->wy + ty - singularborder_baradjustment(c), m->ww - mw, h - c->bw * m->showbar, 0);
 			
             if(!(nexttiled(c->next)))
 				ty += HEIGHT(c) + smh;
-			
             else
 				ty += HEIGHT(c) - c->bw;
 		}
@@ -1766,13 +1777,22 @@ togglefloating(const Arg *arg)
 {
 	if (!selmon->sel)
 		return;
+        
 	selmon->sel->isfloating = !selmon->sel->isfloating || selmon->sel->isfixed;
-	if (selmon->sel->isfloating)
-		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
-			selmon->sel->w, selmon->sel->h, 0);
+	
+    if (selmon->sel->isfloating)
+		/* restore last known float dimensions */
+		resize(selmon->sel, selmon->sel->sfx, selmon->sel->sfy, selmon->sel->sfw, selmon->sel->sfh, 0);
+	else
+    {
+		/* save last known float dimensions */
+		selmon->sel->sfx = selmon->sel->x;
+		selmon->sel->sfy = selmon->sel->y;
+		selmon->sel->sfw = selmon->sel->w;
+		selmon->sel->sfh = selmon->sel->h;
+	}
 
-  resetcanfocusfloating();
-
+    resetcanfocusfloating();
 	arrange(selmon);
 }
 
