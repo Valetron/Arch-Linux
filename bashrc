@@ -48,9 +48,9 @@ alias ls='ls --color=auto'
 alias ip='ip -c'
 alias reboot='sudo reboot'
 alias poweroff='sudo poweroff'
+alias tree='tree -C'
 
-#PS1='[\e[34m\$\e[0m\e[1;93m\w\e[0m]: '
-PS1='[\e[34m\$\e[0m\e[1;93m\w\e[0m]\e[32m$(git_branch)\e[0m: '
+PS1='[\[\e[34m\]\$\[\e[0m\]\[\e[1;93m\]\w\[\e[0m\]]\[\e[32m\]$(git_branch)\[\e[0m\]: '
 
 if [ -e /usr/share/terminfo/x/xterm-256color ]; then
     export TERM='xterm-256color'
