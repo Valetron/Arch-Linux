@@ -14,15 +14,15 @@ set t_AB=[48;5;%dm
 set t_AF=[38;5;%dm
 "set t_8f=[38;2:%lu;%lu;%lum
 "set t_8b=[48;2;%lu;%lu;%lum
-colorscheme spectro
+colorscheme habamax
 set t_Co=256
 set termguicolors
 syntax on
 
 set ruler
 
-set cursorline
-set cursorcolumn
+"set cursorline
+"set cursorcolumn
 
 "autoindent
 "set ai
@@ -31,10 +31,3 @@ set cin
 set showcmd
 "set wildmenu
 
-call plug#begin()
-
-    Plug 'valloric/youcompleteme'
-
-call plug#end()
-
-set completeopt=longest,menuone
