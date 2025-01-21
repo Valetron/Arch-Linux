@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable power button light
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/brightnessctl set 0% -d tpacpi::power
+
+[Install]
+WantedBy=default.target
+
